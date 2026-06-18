@@ -56,28 +56,34 @@ jobs:
                - Read game.js (always — it contains all game logic)
                - Read index.html and/or style.css if the issue is about UI or layout
 
-            3. **Post a diagnosis comment** with this exact format:
-               ```
+            3. **Post a diagnosis comment** using GitHub-flavored Markdown (GFM).
+               Your comment must render correctly on GitHub: use `##` headings, `**bold**`, backtick inline code, fenced code blocks (` ``` `), and `-` bullet lists.
+               Do NOT use HTML tags. Do NOT wrap the entire comment in a code block.
+
+               Use this exact structure:
+
                ## 🔍 Issue Diagnosis
 
                **Summary:** <one-sentence restatement of the issue>
 
-               **Type / Area:** <bug | enhancement | question | etc.> — <which part of the game, e.g. collision detection, rendering, scoring, controls, UI>
+               **Type / Area:** <`bug` | `enhancement` | `question` | etc.> — <which part of the game, e.g. collision detection, rendering, scoring, controls, UI>
 
-               **Likely root cause / relevant logic:** <explain the relevant code section and what might be causing the issue or what needs to change>
+               **Likely root cause / relevant logic:**
+               <explain the relevant code section and what might be causing the issue or what needs to change>
 
                **Affected files:**
                - `game.js` lines X–Y — <brief note>
-               - `index.html` (if applicable)
-               - `style.css` (if applicable)
+               - `index.html` _(if applicable)_
+               - `style.css` _(if applicable)_
 
                **Suggested approach:**
                1. <Step 1>
                2. <Step 2>
                3. <Step 3 — etc.>
 
-               **Applied labels:** <comma-separated list of labels you applied>
-               ```
+               ---
+               **Applied labels:** `<label1>`, `<label2>`
+
                Post it with: gh issue comment ${{ github.event.issue.number }} --repo ${{ github.repository }} --body "<your comment>"
 
             If this is an `edited` event, check if there is already a diagnosis comment from a previous run (look for "## 🔍 Issue Diagnosis" in existing comments). If one exists, your new comment supersedes it — still post a fresh one so it reflects the updated issue content.

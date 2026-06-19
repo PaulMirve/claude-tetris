@@ -46,6 +46,12 @@
           </ul>
         </div>
 
+        <div class="panel-section" id="panel-hs-section">
+          <span class="label">TOP 5</span>
+          <div id="panel-hs-table" class="hs-table-container"></div>
+          <button id="reset-records-btn" class="reset-btn">Reset récords</button>
+        </div>
+
         <div class="panel-section">
           <span class="label">THEME</span>
           <label class="theme-switch">
@@ -61,6 +67,14 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
+        <div id="hs-entry" class="hs-entry hidden">
+          <p class="hs-entry-label">¡Nuevo récord! Ingresa tu nombre:</p>
+          <div class="hs-entry-row">
+            <input type="text" id="hs-name-input" maxlength="20" placeholder="Tu nombre" />
+            <button id="hs-save-btn">Guardar</button>
+          </div>
+        </div>
+        <div id="hs-table-overlay" class="hs-table-container hidden"></div>
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>

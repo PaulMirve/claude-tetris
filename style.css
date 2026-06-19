@@ -164,6 +164,10 @@ kbd {
   display: none;
 }
 
+.hs-table-container.hidden {
+  display: none;
+}
+
 .overlay-box {
   text-align: center;
   display: flex;
@@ -201,6 +205,153 @@ kbd {
 
 #restart-btn:hover {
   background: var(--color-accent-hover);
+}
+
+/* ---- High-scores ---- */
+.hs-table-container {
+  width: 100%;
+}
+
+.hs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.hs-table td {
+  padding: 3px 4px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.hs-rank {
+  color: var(--color-label);
+  width: 18px;
+}
+
+.hs-name {
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hs-score {
+  text-align: right;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.hs-lines {
+  text-align: right;
+  color: var(--color-label);
+  width: 24px;
+}
+
+tr.hs-current td {
+  background: rgba(122, 162, 247, 0.15);
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+[data-theme="light"] tr.hs-current td {
+  background: rgba(34, 85, 221, 0.10);
+}
+
+.hs-empty {
+  font-size: 11px;
+  color: var(--color-label);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Overlay high-scores table — slightly larger */
+#hs-table-overlay .hs-table {
+  font-size: 13px;
+  min-width: 200px;
+}
+
+#hs-table-overlay .hs-table td {
+  padding: 4px 6px;
+}
+
+/* Name entry form */
+.hs-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.hs-entry.hidden {
+  display: none;
+}
+
+.hs-entry-label {
+  font-size: 12px;
+  color: var(--color-text);
+}
+
+.hs-entry-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+#hs-name-input {
+  background: var(--bg-board);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--color-text);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  padding: 6px 8px;
+  width: 130px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#hs-name-input:focus {
+  border-color: var(--color-accent);
+}
+
+#hs-save-btn {
+  background: var(--color-accent);
+  color: var(--color-btn-text);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#hs-save-btn:hover {
+  background: var(--color-accent-hover);
+}
+
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--color-label);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.reset-btn:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 /* ---- Theme toggle switch ---- */

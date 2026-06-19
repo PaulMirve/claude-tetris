@@ -41,6 +41,67 @@ const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let maxLines = 0;
+
+// ---- High-scores ----
+const HS_KEY = 'tetris-highscores';
+let highScores = [];
+
+function loadHighScores() {
+  try {
+    const raw = localStorage.getItem(HS_KEY);
+    highScores = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(highScores)) highScores = [];
+  } catch (_) {
+    highScores = [];
+  }
+}
+
+function saveHighScores() {
+  localStorage.setItem(HS_KEY, JSON.stringify(highScores));
+}
+
+function qualifiesForTop5(s) {
+  return highScores.length < 5 || s > (highScores[4]?.score ?? -1);
+}
+
+function insertHighScore(name, s, linesCleared, ml) {
+  const ts = Date.now();
+  highScores.push({ name: name.trim() || 'AAA', score: s, lines: linesCleared, maxLines: ml, ts });
+  highScores.sort((a, b) => b.score - a.score);
+  highScores = highScores.slice(0, 5);
+  saveHighScores();
+  return highScores.findIndex(r => r.ts === ts);
+}
+
+function buildHsTable(currentIndex, container) {
+  if (highScores.length === 0) {
+    container.innerHTML = '<p class="hs-empty">Sin récords aún</p>';
+    return;
+  }
+  const rows = highScores.map((r, i) => {
+    const isCurrent = currentIndex !== null && i === currentIndex;
+    return `<tr${isCurrent ? ' class="hs-current"' : ''}>
+      <td class="hs-rank">${i + 1}</td>
+      <td class="hs-name">${escapeHtml(r.name)}</td>
+      <td class="hs-score">${r.score.toLocaleString()}</td>
+      <td class="hs-lines">${r.lines}L</td>
+    </tr>`;
+  }).join('');
+  container.innerHTML = `<table class="hs-table"><tbody>${rows}</tbody></table>`;
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderPanelHsTable() {
+  const el = document.getElementById('panel-hs-table');
+  if (el) buildHsTable(null, el);
+}
+
+loadHighScores();
+renderPanelHsTable();
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -104,6 +165,7 @@ function clearLines() {
     }
   }
   if (cleared) {
+    if (cleared > maxLines) maxLines = cleared;
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
@@ -218,11 +280,43 @@ function drawNext() {
       drawBlock(nextCtx, offX + c, offY + r, shape[r][c], NB);
 }
 
+function showOverlayHsTable(currentIndex) {
+  const container = document.getElementById('hs-table-overlay');
+  buildHsTable(currentIndex, container);
+  container.classList.remove('hidden');
+}
+
 function endGame() {
   gameOver = true;
   cancelAnimationFrame(animId);
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
+
+  const hsEntry = document.getElementById('hs-entry');
+  const hsTableOverlay = document.getElementById('hs-table-overlay');
+  hsEntry.classList.add('hidden');
+  hsTableOverlay.classList.add('hidden');
+
+  if (qualifiesForTop5(score)) {
+    hsEntry.classList.remove('hidden');
+    const nameInput = document.getElementById('hs-name-input');
+    nameInput.value = '';
+    setTimeout(() => nameInput.focus(), 50);
+
+    const doSave = () => {
+      const name = nameInput.value.trim() || 'AAA';
+      const idx = insertHighScore(name, score, lines, maxLines);
+      renderPanelHsTable();
+      hsEntry.classList.add('hidden');
+      showOverlayHsTable(idx);
+    };
+
+    document.getElementById('hs-save-btn').onclick = doSave;
+    nameInput.onkeydown = e => { if (e.key === 'Enter') doSave(); };
+  } else {
+    showOverlayHsTable(null);
+  }
+
   overlay.classList.remove('hidden');
 }
 
@@ -261,6 +355,7 @@ function init() {
   score = 0;
   lines = 0;
   level = 1;
+  maxLines = 0;
   paused = false;
   gameOver = false;
   dropInterval = 1000;
@@ -300,6 +395,16 @@ document.addEventListener('keydown', e => {
 });
 
 restartBtn.addEventListener('click', init);
+
+document.getElementById('reset-records-btn').addEventListener('click', () => {
+  localStorage.removeItem(HS_KEY);
+  highScores = [];
+  renderPanelHsTable();
+  const hsTableOverlay = document.getElementById('hs-table-overlay');
+  if (!hsTableOverlay.classList.contains('hidden')) {
+    buildHsTable(null, hsTableOverlay);
+  }
+});
 
 const themeCheckbox = document.getElementById('theme-checkbox');
 
